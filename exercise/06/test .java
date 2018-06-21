@@ -14,8 +14,10 @@ import java.util.regex.Pattern;
 
 
 public class test {
+	
 
 	public static void main(String[] args) {
+		
 		ArrayList mylist = new ArrayList();
 		int i ;
 		try {
@@ -33,6 +35,7 @@ public class test {
 			e.printStackTrace();
 		}
 		writetotxt(mylist);
+		
 		
 
 	}
@@ -54,15 +57,50 @@ public class test {
 					if(mylist.get(jumpcount).toString().indexOf("(")!= -1) {
 						String changetext = mylist.get(jumpcount).toString().replace("(", "");
 						String changetext2 = changetext.replace(")", "").trim();
-						jumplist.add(changetext2);			
-						jumpcount2.add(jumpcount);
+						jumplist.add(changetext2);
+						if(jumpcount2.isEmpty()) {
+							jumpcount2.add(jumpcount);
+						}
+						else {
+							jumpcount2.add(jumpcount-1);
+						}
 					}
 			}
 			int i;
 			ArrayList text = new ArrayList();
+			String symtable [][] = 
+				{{"R0","0"},
+				 {"R1","1"},
+				 {"R","2"},
+				 {"R3" ,"3"},
+				 {"R4","4"},
+				 {"R5","5"},
+				{"R6" ,"6"},
+				{"R7","7"},
+				{"R8","8"},
+				{"R9","9"},
+				{"R10","10"},
+				{"R11","11"},
+				{"R12","12"},
+				{"R13" ,"13"},
+				{"R14","14"},
+				{"R15","15"},
+				{"SP" ,"0"},
+				{ "LCL","1"},
+				{"ARG","2"},
+				{"THIS","3"}, 
+				{ "THAT","4"},
+				{"KBD" ,"24576"},
+				{"SCREEN","16384"},
+				};
+			
 			for(i = 0;i<mylist.size();i++) {
 				String a1 = (mylist.get(i)).toString();
 				String b = a1.trim();
+				ArrayList symlist = new ArrayList();
+				for(int sym = 0;sym<symtable.length-1;sym++) {
+					symlist.add(symtable[sym][0]);
+				}
 				if(String.valueOf(b.charAt(0)).equals("@")) { //a
 					String insA1 = "0";
 					String insnumber = b.substring(1,b.length());
@@ -73,6 +111,14 @@ public class test {
 				    String binary0 = binary1.replace(" ","0");
 				    String insA = insA1 + binary0;
 				    finallist.add(insA);
+					}
+					else if(symlist.contains(insnumber)){
+						int symnum = symlist.indexOf(insnumber);
+						String formatstr = "%15s";
+					    String binary1 = String.format(formatstr,Integer.toBinaryString(symnum));
+					    String binary0 = binary1.replace(" ","0");
+					    String insA = insA1 + binary0;
+					    finallist.add(insA);
 					}
 					else if(!jumplist.contains(b.substring(1))){
 						if(text.contains(b)) {
@@ -94,11 +140,16 @@ public class test {
 						}
 						text.add(b);
 					}
+					
 					else {
 						String jump = b.substring(1,b.length());
 						System.out.println(jump);
 						if(jumplist.contains(jump)) {
-							finallist.add(jumpcount2.get(jumplist.indexOf(jump)).toString());
+							int tobin = Integer.parseInt(jumpcount2.get(jumplist.indexOf(jump)).toString());
+							String formatstr = "%16s";
+						    String binary1 = String.format(formatstr,Integer.toBinaryString(tobin));
+						    String binary0 = binary1.replace(" ","0");
+							finallist.add(binary0);
 						}
 						
 					}
@@ -501,8 +552,8 @@ public class test {
 					
 					
 				}else {
-					String thisline = "------------";
-					finallist.add(thisline);
+//					String thisline = "------------";
+//					finallist.add(thisline);
 				}
 			FileWriter fw = new FileWriter("/Users/HawkTorng/Desktop/test2.txt");
 			BufferedWriter bw = new BufferedWriter(fw);
